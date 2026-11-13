@@ -1,24 +1,37 @@
-import { ArrowRight } from 'lucide-react';
-import Reveal from '../ui/Reveal';
-import Eyebrow from '../ui/Eyebrow';
-import { unsplash } from '../../utils/format';
+import { ArrowRight, ChevronRight } from 'lucide-react';
 
-const Hero = () => (
-  <section id="top" className="relative flex min-h-[88vh] items-end overflow-hidden bg-[#081A33] pb-20 pt-40">
-    <img src={unsplash('photo-1451187580459-43490279c0fa', 2000)} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />
-    <div className="absolute inset-0 bg-gradient-to-t from-[#081A33] via-[#081A33]/60 to-transparent" />
-    <div className="relative mx-auto w-full max-w-7xl px-6 md:px-12">
-      <Reveal className="max-w-3xl">
-        <Eyebrow light>Education and commerce</Eyebrow>
-        <h1 className="text-5xl font-light leading-[1.05] tracking-tight text-white md:text-7xl">What does it really cost to study in China?</h1>
-        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-300 md:text-xl">Tuition, scholarships and housing, compared by major, so you can plan with real numbers.</p>
-        <div className="mt-10 flex flex-wrap gap-4">
-          <a href="#study" className="inline-flex items-center gap-3 bg-[#2F6BFF] px-8 py-4 font-semibold text-white hover:bg-[#4a7dff]">See tuition data <ArrowRight className="h-5 w-5" aria-hidden /></a>
-          <a href="#shop" className="inline-flex items-center gap-3 border border-white/70 px-8 py-4 font-semibold text-white hover:bg-white hover:text-[#081A33]">Browse the shop</a>
+export default function Hero() {
+  return (
+    <section className="relative h-screen flex items-center pt-20 overflow-hidden">
+      <div className="absolute inset-0 bg-slate-900">
+        <img 
+          src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop" 
+          alt="Global Network" 
+          className="w-full h-full object-cover opacity-40"
+        />
+      </div>
+      
+      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 w-full">
+        <div className="max-w-3xl">
+          <p className="text-blue-400 font-bold tracking-widest uppercase text-sm mb-6 border-l-2 border-blue-400 pl-4">Strategic Global Positioning</p>
+          <h1 className="text-5xl md:text-7xl font-light text-white tracking-tight leading-tight mb-8">
+            Clarity for a <br/><span className="font-bold">Complex World.</span>
+          </h1>
+          <p className="text-lg md:text-xl text-slate-300 font-light mb-12 max-w-2xl leading-relaxed">
+            Powering global mobility through elite educational pathways in China, alongside a rigorous, institutional-grade commercial marketplace.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <a href="#study" className="group flex items-center justify-between bg-blue-600 text-white px-8 py-4 text-sm uppercase tracking-widest font-bold hover:bg-blue-500 transition-colors w-full sm:w-auto">
+              Explore Scholarships
+              <ArrowRight className="w-5 h-5 ml-4 group-hover:translate-x-1 transition-transform" />
+            </a>
+            <a href="#shop" className="group flex items-center justify-between bg-transparent border border-white text-white px-8 py-4 text-sm uppercase tracking-widest font-bold hover:bg-white hover:text-slate-900 transition-all w-full sm:w-auto">
+              Enter Global Shop
+              <ChevronRight className="w-5 h-5 ml-4 group-hover:translate-x-1 transition-transform" />
+            </a>
+          </div>
         </div>
-      </Reveal>
-    </div>
-  </section>
-);
-
-export default Hero;
+      </div>
+    </section>
+  );
+}
