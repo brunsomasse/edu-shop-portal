@@ -1,13 +1,21 @@
-import { Globe2, ArrowUpRight, Menu, X } from 'lucide-react';
+import { ArrowUpRight, Menu, X } from 'lucide-react';
+import logoImg from '../../assets/edushop-global-logo-transparent.png';
 
 export default function Header({ isScrolled, mobileMenuOpen, setMobileMenuOpen }) {
   return (
-    <header className={`fixed top-0 w-full z-50 flex justify-center transition-all duration-500 border-b ${isScrolled ? 'bg-white border-slate-200 py-4 shadow-sm' : 'bg-transparent border-transparent py-6 text-white'}`}>
+    <header className={`fixed top-0 w-full z-50 flex justify-center transition-all duration-500 border-b ${isScrolled ? 'bg-white/95 backdrop-blur-md border-slate-200 py-4 shadow-sm' : 'bg-transparent border-transparent py-6 text-white'}`}>
       <div className="w-full max-w-7xl px-6 md:px-12 flex justify-between items-center">
-        <div className="flex items-center gap-2 cursor-pointer">
-          <Globe2 className={`w-8 h-8 ${isScrolled ? 'text-blue-900' : 'text-white'}`} />
-          <span className="text-xl font-bold tracking-tight uppercase">EduShop<span className="font-light">Global</span></span>
-        </div>
+        
+        {/* True Transparent Logo */}
+        <a href="#" className="flex items-center cursor-pointer">
+          <img 
+            src={logoImg} 
+            alt="EduShop Global" 
+            className={`h-10 md:h-12 w-auto object-contain transition-all duration-300 ${
+              isScrolled ? '' : 'brightness-0 invert'
+            }`}
+          />
+        </a>
         
         <nav className="hidden md:flex gap-10 text-sm uppercase tracking-widest font-semibold">
           <a href="#study" className="hover:text-blue-500 transition-colors">Study in China</a>
@@ -20,7 +28,7 @@ export default function Header({ isScrolled, mobileMenuOpen, setMobileMenuOpen }
         </button>
 
         <button className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {mobileMenuOpen ? <X className="w-6 h-6 text-slate-900" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>
     </header>

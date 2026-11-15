@@ -1,25 +1,49 @@
-import { Globe2 } from 'lucide-react';
-import { FOOTER } from '../../data/content';
+import logoImg from '../../assets/edushop-global-logo-transparent.png';
 
-const Footer = () => (
-  <footer className="bg-[#081A33] pb-10 pt-20 text-white">
-    <div className="mx-auto max-w-7xl px-6 md:px-12">
-      <div className="grid gap-12 border-b border-white/10 pb-14 md:grid-cols-4">
-        <div className="md:col-span-1">
-          <div className="mb-5 flex items-center gap-2"><Globe2 className="h-7 w-7 text-[#19C3C7]" aria-hidden /><span className="text-xl font-semibold">Edu<span className="font-light">Commerce</span></span></div>
-          <p className="text-sm leading-relaxed text-slate-400">Education pathways in China and a trusted global marketplace.</p>
+export default function Footer() {
+  return (
+    <footer className="bg-slate-900 text-slate-300 py-20 w-full flex justify-center border-t border-slate-800">
+      <div className="w-full max-w-7xl px-6 md:px-12 flex flex-col justify-between">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 pb-16 border-b border-slate-800">
+          <div>
+            <img 
+              src={logoImg} 
+              alt="EduShop Global" 
+              className="h-10 w-auto object-contain brightness-0 invert"
+            />
+            <p className="mt-4 text-sm text-slate-400 font-light">Powering global academic mobility and vetted institutional supply chains between China and international markets.</p>
+          </div>
+          <div>
+            <h4 className="text-xs uppercase tracking-widest font-bold text-white mb-4">Academic Portal</h4>
+            <ul className="space-y-2 text-sm font-light">
+              <li><a href="#study" className="hover:text-white transition-colors">Hubei University</a></li>
+              <li><a href="#study" className="hover:text-white transition-colors">Scholarship Tiers</a></li>
+              <li><a href="#study" className="hover:text-white transition-colors">Housing & Fees</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-xs uppercase tracking-widest font-bold text-white mb-4">Global Shop</h4>
+            <ul className="space-y-2 text-sm font-light">
+              <li><a href="#shop" className="hover:text-white transition-colors">BYD & Changan Vehicles</a></li>
+              <li><a href="#shop" className="hover:text-white transition-colors">Electronics & Tech</a></li>
+              <li><a href="#shop" className="hover:text-white transition-colors">Renewable Energy</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-xs uppercase tracking-widest font-bold text-white mb-4">Institutional Compliance</h4>
+            <p className="text-sm text-slate-400 font-light mb-4">Strict quality checks and tracked international shipping standards.</p>
+            <span className="text-xs text-blue-400 font-mono">SECURE SSL VERIFIED</span>
+          </div>
         </div>
-        {Object.entries(FOOTER).map(([h, links]) => (
-          <div key={h}><h4 className="mb-5 text-xs font-semibold uppercase tracking-widest text-slate-400">{h}</h4>
-            <ul className="space-y-3 text-sm">{links.map((l) => <li key={l}><a href="#" className="text-slate-200 hover:text-[#19C3C7]">{l}</a></li>)}</ul></div>
-        ))}
+        <div className="mt-12 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
+          <p>&copy; 2026 Edu Shop Global. All rights reserved.</p>
+          <div className="flex gap-6 mt-4 md:mt-0">
+            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+            <a href="#" className="hover:text-white transition-colors">Security</a>
+          </div>
+        </div>
       </div>
-      <div className="flex flex-col justify-between gap-4 pt-8 text-xs text-slate-400 md:flex-row">
-        <p>© 2026 EduCommerce. All rights reserved.</p>
-        <div className="flex gap-6">{['Terms of use', 'Privacy notice', 'Cookie policy'].map((l) => <a key={l} href="#" className="hover:text-white">{l}</a>)}</div>
-      </div>
-    </div>
-  </footer>
-);
-
-export default Footer;
+    </footer>
+  );
+}
