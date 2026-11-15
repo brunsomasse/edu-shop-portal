@@ -4,7 +4,9 @@ on:
   schedule:
     - cron: '0 8 */4 * *'
   push:
-    branches: [main]
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
   workflow_dispatch:
 
 jobs:
@@ -15,7 +17,7 @@ jobs:
 
       - name: Verify no .env files committed
         run: |
-          if git ls-files | grep -E '(^|/)\.env'; then
+          if git ls-files | grep -E "(^|/)\.env"; then
             echo "Error: .env file tracked in git!"
             exit 1
           fi
@@ -33,7 +35,7 @@ jobs:
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
       - name: Ping Supabase REST API
-        if: env.SUPABASE_URL != ''
+        if: github.event_name != 'pull_request'
         env:
           SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
