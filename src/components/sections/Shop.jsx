@@ -1,160 +1,141 @@
-import { useState, useEffect } from 'react';
-import { ArrowRight, ArrowUpRight } from 'lucide-react';
+import React, { useState } from 'react';
 
-import bydImg from '../../assets/BYD.webp';
-import changanImg from '../../assets/Changan.jpeg';
-import jetourImg from '../../assets/Jetour.jpeg';
-import truck1Img from '../../assets/Truck 1.jpg';
-import truckImg from '../../assets/Truck.webp';
+const INITIAL_PRODUCTS = [
+  {
+    id: 1,
+    title: 'AWS Solutions Architect Associate Masterclass',
+    category: 'Cloud Certifications',
+    price: 49.99,
+    description: 'Comprehensive labs, practice exams, and architectural frameworks for AWS SAA-C03.',
+    level: 'Intermediate',
+  },
+  {
+    id: 2,
+    title: 'Terraform & GitOps Production Blueprints',
+    category: 'DevOps & IaC',
+    price: 39.99,
+    description: 'Multi-environment infrastructure codebases for private EKS, GKE, and automated CI/CD.',
+    level: 'Advanced',
+  },
+  {
+    id: 3,
+    title: 'React & Tailwind Full-Stack Web App Package',
+    category: 'Web Development',
+    price: 750.00,
+    description: 'Custom responsive web application build with modern React, Tailwind CSS, and API integration.',
+    level: 'Starter ($500–$5,000 Tier)',
+  },
+  {
+    id: 4,
+    title: 'Enterprise SaaS & E-Commerce Web Platform',
+    category: 'Web Development',
+    price: 3500.00,
+    description: 'End-to-end scalable portal with RBAC authentication, PostgreSQL database, payments, and CI/CD.',
+    level: 'Enterprise ($500–$5,000 Tier)',
+  },
+  {
+    id: 5,
+    title: 'Kubernetes Native Associate (KCNA) Prep Guide',
+    category: 'Cloud Certifications',
+    price: 34.99,
+    description: 'Container orchestration fundamentals, security policies, and cluster administration.',
+    level: 'Beginner',
+  },
+];
 
-export default function Shop({ onOpenPortal }) {
-  const [tick, setTick] = useState(0);
+export default function Shop({ onAddToCart }) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTick((prev) => prev + 1);
-    }, 3500);
-    return () => clearInterval(timer);
-  }, []);
+  const categories = ['All', 'Cloud Certifications', 'DevOps & IaC', 'Web Development'];
 
-  const categories = {
-    cars: {
-      title: "Cars and trucks",
-      tagline: "Featured Brand",
-      portalCategory: "Global Shop — Vehicles & Trucks",
-      labels: ["BYD Tang", "Changan SUV", "Jetour", "Sinotruk HOWO", "HOWO Dump Truck"],
-      images: [bydImg, changanImg, jetourImg, truck1Img, truckImg]
-    },
-    tech: {
-      title: "Tech and phones",
-      tagline: "Electronics",
-      portalCategory: "Global Shop — Tech & Industrial",
-      labels: ["Laptops & PCs", "Smartphones", "Audio Gear", "Smart Wearables"],
-      images: [
-        "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=2000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=2000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=2000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1526406915894-7bcd65f60845?q=80&w=2000&auto=format&fit=crop"
-      ]
-    },
-    appliances: {
-      title: "Home Appliances",
-      tagline: "Domestic",
-      portalCategory: "Global Shop — Tech & Industrial",
-      labels: ["Kitchen", "Laundry Systems", "Climate Control", "Smart Home"],
-      images: [
-        "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=2000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1626806787426-5910811b6325?q=80&w=2000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1574845585097-4091a1df2778?q=80&w=2000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=2000&auto=format&fit=crop"
-      ]
-    },
-    energy: {
-      title: "Renewable Energy",
-      tagline: "Infrastructure",
-      portalCategory: "Global Shop — Tech & Industrial",
-      labels: ["Solar Panels", "Battery Storage", "Inverters", "EV Charging"],
-      images: [
-        "https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=2000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1521618755572-156ae0cdd74d?q=80&w=2000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1466611653911-95081537e5b7?q=80&w=2000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1611365892117-00ac5ef43c90?q=80&w=2000&auto=format&fit=crop"
-      ]
-    },
-    industrial: {
-      title: "Industrial & Manufacturing",
-      tagline: "Heavy Equipment",
-      portalCategory: "Global Shop — Tech & Industrial",
-      labels: ["Precision Tools", "Factory Robotics", "Construction", "Logistics"],
-      images: [
-        "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1565514020179-026b92b84bb6?q=80&w=2000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?q=80&w=2000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1530124566582-a618bc2615dc?q=80&w=2000&auto=format&fit=crop"
-      ]
-    }
-  };
-
-  const handleRequestQuote = (portalCategory, subject) => {
-    onOpenPortal?.({
-      authMode: 'signup',
-      accountType: 'Commercial / Trade Buyer',
-      tab: 'inquiries',
-      category: portalCategory,
-      subject
-    });
-  };
-
-  const AnimatedCard = ({ data, colSpan = "col-span-1" }) => {
-    const currentIndex = tick % data.images.length;
-    const activeItem = data.labels[currentIndex];
-
-    return (
-      <div
-        onClick={() => handleRequestQuote(data.portalCategory, `CIF Quote Request: ${data.title} (${activeItem})`)}
-        className={`group relative h-96 bg-slate-900 overflow-hidden cursor-pointer ${colSpan}`}
-      >
-        {data.images.map((img, idx) => (
-          <img
-            key={idx}
-            src={img}
-            alt={data.labels[idx]}
-            className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-in-out ${
-              currentIndex === idx ? 'opacity-70 group-hover:scale-105' : 'opacity-0'
-            }`}
-          />
-        ))}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/30 to-transparent"></div>
-        <div className="absolute bottom-0 left-0 p-8 w-full flex justify-between items-end">
-          <div>
-            <p className="text-blue-400 font-bold uppercase tracking-widest text-xs mb-2">
-              {data.tagline}: <span className="text-white">{activeItem}</span>
-            </p>
-            <h3 className="text-2xl md:text-3xl font-light text-white">{data.title}</h3>
-          </div>
-          <div className="bg-white/10 backdrop-blur p-4 rounded-none border border-white/20 group-hover:bg-white group-hover:text-slate-900 transition-colors">
-            <ArrowUpRight className="w-6 h-6" />
-          </div>
-        </div>
-      </div>
-    );
-  };
+  const filteredProducts = INITIAL_PRODUCTS.filter((product) => {
+    const matchesSearch =
+      product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
-    <section id="shop" className="py-32 bg-slate-50 border-t border-slate-200 w-full flex justify-center">
-      <div className="w-full max-w-7xl px-6 md:px-12">
-        <div className="mb-16 border-b border-slate-200 pb-12">
-          <h2 className="text-4xl md:text-5xl font-light text-slate-900 tracking-tight mb-6">
-            Quality goods from vetted suppliers
-          </h2>
-          <p className="text-lg text-slate-600 font-light max-w-2xl">
-            Vehicles, electronics, appliances, and industrial assets with stringent quality checks and tracked international shipping.
-          </p>
-        </div>
+    <section id="shop" className="max-w-7xl mx-auto px-4 py-12">
+      <div className="text-center mb-10">
+        <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight sm:text-4xl">
+          EduShop Global Catalog
+        </h2>
+        <p className="mt-3 max-w-2xl mx-auto text-lg text-gray-500">
+          Professional cloud blueprints, certification guides, and full-stack web solutions.
+        </p>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <AnimatedCard data={categories.cars} colSpan="md:col-span-2" />
-          <AnimatedCard data={categories.tech} colSpan="md:col-span-1" />
-          <AnimatedCard data={categories.appliances} colSpan="md:col-span-1" />
-          <AnimatedCard data={categories.energy} colSpan="md:col-span-1" />
-          <AnimatedCard data={categories.industrial} colSpan="md:col-span-1" />
+      {/* Search and Filter Bar */}
+      <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+        <input
+          type="text"
+          placeholder="Search courses, guides, or web packages..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full md:w-1/3 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+        />
 
-          <div className="md:col-span-3 border border-slate-300 bg-white p-12 flex flex-col md:flex-row justify-between items-start md:items-center hover:border-blue-900 transition-colors group mt-6">
-            <div>
-              <h3 className="text-2xl font-light text-slate-900 mb-2">Institutional Supply Chain Solutions</h3>
-              <p className="text-slate-600 max-w-2xl font-light">Access our full catalog of vetted global suppliers. Strict compliance and international shipping standard applied to all institutional orders.</p>
-            </div>
+        <div className="flex flex-wrap gap-2 justify-center">
+          {categories.map((cat) => (
             <button
-              type="button"
-              onClick={() => handleRequestQuote('Global Shop — Vehicles & Trucks', 'Institutional Supply Chain Catalog & Procurement Inquiry')}
-              className="mt-6 md:mt-0 inline-flex items-center bg-blue-900 text-white px-8 py-4 font-bold uppercase tracking-widest text-sm hover:bg-blue-800 transition-colors cursor-pointer"
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                selectedCategory === cat
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
             >
-              Request Full Catalog
-              <ArrowRight className="w-5 h-5 ml-4 group-hover:translate-x-2 transition-transform" />
+              {cat}
             </button>
-          </div>
+          ))}
         </div>
       </div>
+
+      {/* Product Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredProducts.map((product) => (
+          <div
+            key={product.id}
+            className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 flex flex-col justify-between hover:shadow-lg transition-shadow"
+          >
+            <div className="p-6">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-xs font-semibold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded">
+                  {product.category}
+                </span>
+                {product.category === 'Web Development' && (
+                  <span className="text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+                    $500 – $5,000 Range
+                  </span>
+                )}
+              </div>
+              <h3 className="mt-4 text-lg font-bold text-gray-900">{product.title}</h3>
+              <p className="mt-2 text-sm text-gray-600">{product.description}</p>
+            </div>
+            <div className="px-6 pb-6 pt-2 border-t border-gray-100 flex items-center justify-between">
+              <span className="text-xl font-bold text-gray-900">
+                ${product.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </span>
+              <button
+                onClick={() => onAddToCart && onAddToCart(product)}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors cursor-pointer"
+              >
+                Add to Cart
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {filteredProducts.length === 0 && (
+        <div className="text-center py-12 text-gray-500">
+          No products found matching your search criteria.
+        </div>
+      )}
     </section>
   );
 }
