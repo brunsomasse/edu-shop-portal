@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { ArrowUpRight } from 'lucide-react';
 
-export default function Study() {
+export default function Study({ onOpenPortal }) {
   const [activeTab, setActiveTab] = useState('bachelor');
 
   const programs = {
@@ -21,12 +22,21 @@ export default function Study() {
     ]
   };
 
+  const handleApplyProgram = (programName = 'General Admission & Scholarship') => {
+    const levelLabel = activeTab.charAt(0).toUpperCase() + activeTab.slice(1);
+    onOpenPortal?.({
+      authMode: 'signup',
+      accountType: 'Student Candidate (HBUT)',
+      tab: 'inquiries',
+      category: 'Study in China (HBUT)',
+      subject: `HBUT ${levelLabel} Application — ${programName}`
+    });
+  };
+
   return (
-    // Forces full width and centers the inner container
     <section id="study" className="py-32 bg-white w-full flex justify-center border-b border-slate-100">
       <div className="w-full max-w-7xl px-6 md:px-12">
-        
-        <div className="mb-16 md:mb-24 flex flex-col md:flex-row md:justify-between md:items-end border-b border-slate-200 pb-12">
+        <div className="mb-16 md:mb-24 flex flex-col md:flex-row md:justify-between md:items-end border-b border-slate-200 pb-12 gap-6">
           <div className="max-w-2xl">
             <h2 className="text-4xl md:text-5xl font-light text-slate-900 tracking-tight mb-6">
               Hubei University of Technology
@@ -35,19 +45,29 @@ export default function Study() {
               Institutional data and tuition structuring for international candidates.
             </p>
           </div>
-          <div className="mt-8 md:mt-0">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <span className="text-sm font-bold uppercase tracking-widest text-blue-900">2026 Admissions Cycle</span>
+            <button
+              type="button"
+              onClick={() => handleApplyProgram()}
+              className="inline-flex items-center gap-2 bg-blue-900 text-white px-6 py-3 text-xs uppercase tracking-widest font-bold hover:bg-blue-800 transition-colors cursor-pointer"
+            >
+              Start Application <ArrowUpRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
         <div>
-          {/* Added gap-4 to create white space between the tabs */}
           <div className="flex flex-wrap gap-4 border-b border-slate-200 mb-0">
             {['bachelor', 'master', 'language'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-8 py-4 text-sm uppercase tracking-widest font-bold transition-colors ${activeTab === tab ? 'border-b-2 border-blue-900 text-blue-900 bg-slate-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}
+                className={`px-8 py-4 text-sm uppercase tracking-widest font-bold transition-colors cursor-pointer ${
+                  activeTab === tab
+                    ? 'border-b-2 border-blue-900 text-blue-900 bg-slate-50'
+                    : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+                }`}
               >
                 {tab}
               </button>
@@ -65,10 +85,24 @@ export default function Study() {
               </thead>
               <tbody>
                 {programs[activeTab].map((prog, idx) => (
-                  <tr key={idx} className="hover:bg-slate-50 transition-colors group cursor-default">
-                    <td className="p-6 border-b border-r border-slate-200 text-slate-900 font-medium group-hover:text-blue-900 transition-colors">{prog.name}</td>
+                  <tr
+                    key={idx}
+                    onClick={() => handleApplyProgram(prog.name)}
+                    title="Click to apply for this program"
+                    className="hover:bg-slate-50 transition-colors group cursor-pointer"
+                  >
+                    <td className="p-6 border-b border-r border-slate-200 text-slate-900 font-medium group-hover:text-blue-900 transition-colors">
+                      {prog.name}
+                    </td>
                     <td className="p-6 border-b border-r border-slate-200 text-slate-600 font-light">{prog.tuition}</td>
-                    <td className="p-6 border-b border-slate-200 text-blue-700 font-medium">{prog.partial}</td>
+                    <td className="p-6 border-b border-slate-200 text-blue-700 font-medium">
+                      <div className="flex items-center justify-between gap-2">
+                        <span>{prog.partial}</span>
+                        <span className="text-[11px] uppercase tracking-wider font-bold text-blue-900 opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center gap-1">
+                          Apply <ArrowUpRight className="w-3.5 h-3.5" />
+                        </span>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -89,7 +123,6 @@ export default function Study() {
               <p className="text-2xl font-light text-slate-900">3,000¥ <span className="text-sm text-slate-500">/ $510 yr</span></p>
             </div>
           </div>
-          
         </div>
       </div>
     </section>

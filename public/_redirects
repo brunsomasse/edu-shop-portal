@@ -1,0 +1,12 @@
+# Explicitly block crawler probes for dotfiles, backups, and config extensions
+/.env*          /404.html  404!
+/.git/*         /404.html  404!
+/.DS_Store      /404.html  404!
+/*.bak          /404.html  404!
+/*.sql          /404.html  404!
+/*.log          /404.html  404!
+/wp-admin/*     /404.html  404!
+/wp-login.php   /404.html  404!
+
+# SPA fallback for legitimate routes
+/*              /index.html  200
