@@ -1,4 +1,3 @@
-cat << 'EOF' > src/components/sections/Shop.jsx
 import { useState, useEffect, useCallback } from 'react';
 import { ArrowRight, ArrowUpRight, Check, ShoppingCart } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
@@ -414,4 +413,3 @@ export default function Shop({ onOpenPortal, onAddToCart }) {
     </section>
   );
 }
-EOF
