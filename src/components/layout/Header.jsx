@@ -93,13 +93,13 @@ export default function Header({ isScrolled, mobileMenuOpen, setMobileMenuOpen, 
                     onClick={() => handleSelectStudyTrack('iou')}
                     className="w-full text-left px-5 py-3.5 hover:bg-slate-50 transition-colors flex items-start gap-3.5 cursor-pointer"
                   >
-                    <Globe className="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" />
+                    <Globe className="w-5 h-5 text-blue-800 shrink-0 mt-0.5" />
                     <div>
                       <div className="flex items-center gap-2">
-                        <p className="text-xs font-bold uppercase tracking-wider text-emerald-700">
+                        <p className="text-xs font-bold uppercase tracking-wider text-blue-800">
                           Study from Everywhere
                         </p>
-                        <span className="text-[10px] font-bold uppercase bg-emerald-50 text-emerald-700 px-1.5 py-0.5">
+                        <span className="text-[10px] font-bold uppercase bg-blue-50 text-blue-800 px-1.5 py-0.5">
                           100% Online
                         </span>
                       </div>
@@ -164,10 +164,10 @@ export default function Header({ isScrolled, mobileMenuOpen, setMobileMenuOpen, 
             <button
               type="button"
               onClick={() => handleSelectStudyTrack('iou')}
-              className="w-full text-left py-2 flex items-center justify-between text-sm font-semibold text-emerald-800 hover:text-emerald-600 cursor-pointer"
+              className="w-full text-left py-2 flex items-center justify-between text-sm font-semibold text-blue-900 hover:text-blue-700 cursor-pointer"
             >
               <span>Study from Everywhere (IOU Online)</span>
-              <ArrowUpRight className="w-4 h-4 text-emerald-700" />
+              <ArrowUpRight className="w-4 h-4 text-blue-800" />
             </button>
           </div>
 
