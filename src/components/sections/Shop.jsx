@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { ArrowRight, ArrowUpRight, ShoppingCart } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { ArrowRight, ArrowUpRight, Check, ShoppingCart } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 import bydImg from '../../assets/BYD.webp';
 import changanImg from '../../assets/Changan.jpeg';
@@ -7,52 +8,117 @@ import jetourImg from '../../assets/Jetour.jpeg';
 import truck1Img from '../../assets/Truck 1.jpg';
 import truckImg from '../../assets/Truck.webp';
 
-const DIGITAL_PRODUCTS = [
+const FALLBACK_PRODUCTS = [
   {
-    id: 'web-starter',
-    title: 'React & Tailwind Full-Stack Web App Package',
+    id: 'starter-landing-page',
+    title: 'Starter Landing Page',
     category: 'Web Development',
-    price: 750.0,
+    price: 500.0,
+    badge: 'Entry Tier',
     description:
-      'Custom responsive web application build with modern React, Tailwind CSS, and API integration.',
+      'High-converting single-page responsive website tailored for launches, portfolios, and SMEs.',
+    features: [
+      'Responsive React / Tailwind UI',
+      'SEO & Lighthouse Performance Setup',
+      'Contact Form & Domain Deployment',
+      '14-Day Post-Launch Support',
+    ],
   },
   {
-    id: 'web-enterprise',
-    title: 'Enterprise SaaS & E-Commerce Web Platform',
+    id: 'business-growth-web-app',
+    title: 'Business Growth Web App',
     category: 'Web Development',
-    price: 3500.0,
+    price: 1500.0,
+    badge: 'Most Popular',
     description:
-      'End-to-end scalable portal with RBAC authentication, PostgreSQL database, payments, and CI/CD.',
+      'Multi-page corporate platform with CMS/database integration, client authentication, and analytics.',
+    features: [
+      'Up to 8 Custom Pages',
+      'Supabase Auth & Database Integration',
+      'Admin Content Dashboard',
+      'CI/CD Automated Deployment',
+    ],
   },
   {
-    id: 'aws-saa',
-    title: 'AWS Solutions Architect Associate Masterclass',
-    category: 'Cloud Certifications',
-    price: 49.99,
+    id: 'custom-ecommerce-portal',
+    title: 'Custom E-Commerce & Portal',
+    category: 'Web Development',
+    price: 3000.0,
+    badge: 'Commerce',
     description:
-      'Comprehensive labs, practice exams, and architectural frameworks for AWS SAA-C03.',
+      'Full-featured commerce and client portal with RBAC, order pipelines, and payment gateway readiness.',
+    features: [
+      'Role-Based Access Control (RBAC)',
+      'Dynamic Product & Order Management',
+      'Payment Gateway Webhook Architecture',
+      'Security Hardening & Audit',
+    ],
   },
   {
-    id: 'terraform-gitops',
-    title: 'Terraform & GitOps Production Blueprints',
-    category: 'DevOps & IaC',
-    price: 39.99,
+    id: 'enterprise-cloud-saas',
+    title: 'Enterprise Cloud & SaaS Platform',
+    category: 'Web Development',
+    price: 5000.0,
+    badge: 'Enterprise',
     description:
-      'Multi-environment infrastructure codebases for private EKS, GKE, and automated CI/CD.',
-  },
-  {
-    id: 'kcna-prep',
-    title: 'Kubernetes Native Associate (KCNA) Prep Guide',
-    category: 'Cloud Certifications',
-    price: 34.99,
-    description:
-      'Container orchestration fundamentals, security policies, and cluster administration.',
+      'End-to-end scalable SaaS or enterprise web platform with multi-environment cloud infrastructure.',
+    features: [
+      'Custom Full-Stack Architecture',
+      'Multi-Environment CI/CD & Containerization',
+      'Third-Party API & ERP Integrations',
+      '60-Day Priority Engineering SLA',
+    ],
   },
 ];
+
+const formatCategoryLabel = (rawCategory) => {
+  if (!rawCategory) return 'Web Development';
+  const normalized = rawCategory.trim().toLowerCase();
+  if (normalized === 'web-development' || normalized === 'web development') {
+    return 'Web Development';
+  }
+  if (normalized === 'cloud-certifications' || normalized === 'cloud certifications') {
+    return 'Cloud Certifications';
+  }
+  if (normalized === 'devops-iac' || normalized === 'devops & iac') {
+    return 'DevOps & IaC';
+  }
+  return rawCategory;
+};
 
 export default function Shop({ onOpenPortal, onAddToCart }) {
   const [tick, setTick] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [products, setProducts] = useState(FALLBACK_PRODUCTS);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+
+  const fetchProducts = useCallback(async () => {
+    setLoadingProducts(true);
+    const { data, error } = await supabase
+      .from('products')
+      .select('id, title, category, description, price, features, image_url, badge, sort_order')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: true });
+
+    if (!error && data && data.length > 0) {
+      setProducts(
+        data.map((item) => ({
+          ...item,
+          price: Number(item.price),
+          category: formatCategoryLabel(item.category),
+          features: Array.isArray(item.features) ? item.features : [],
+        }))
+      );
+    }
+    setLoadingProducts(false);
+  }, []);
+
+  useEffect(() => {
+    fetchProducts();
+    window.addEventListener('products-updated', fetchProducts);
+    return () => window.removeEventListener('products-updated', fetchProducts);
+  }, [fetchProducts]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -201,9 +267,17 @@ export default function Shop({ onOpenPortal, onAddToCart }) {
     );
   };
 
-  const digitalCategories = ['All', 'Web Development', 'Cloud Certifications', 'DevOps & IaC'];
-  const filteredDigital = DIGITAL_PRODUCTS.filter(
-    (item) => selectedCategory === 'All' || item.category === selectedCategory
+  const dynamicCategories = [
+    'All',
+    ...Array.from(new Set(products.map((item) => item.category))),
+  ];
+
+  const activeCategory = dynamicCategories.includes(selectedCategory)
+    ? selectedCategory
+    : 'All';
+
+  const filteredDigital = products.filter(
+    (item) => activeCategory === 'All' || item.category === activeCategory
   );
 
   return (
@@ -264,13 +338,13 @@ export default function Shop({ onOpenPortal, onAddToCart }) {
               </h3>
             </div>
             <div className="flex flex-wrap gap-2">
-              {digitalCategories.map((cat) => (
+              {dynamicCategories.map((cat) => (
                 <button
                   key={cat}
                   type="button"
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-4 py-2 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer ${
-                    selectedCategory === cat
+                    activeCategory === cat
                       ? 'bg-blue-900 text-white'
                       : 'bg-white border border-slate-300 text-slate-700 hover:border-blue-900'
                   }`}
@@ -281,44 +355,59 @@ export default function Shop({ onOpenPortal, onAddToCart }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredDigital.map((product) => (
-              <div
-                key={product.id}
-                className="bg-white border border-slate-200 p-8 flex flex-col justify-between hover:border-blue-900 transition-colors"
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-2 mb-4">
-                    <span className="text-xs font-bold uppercase tracking-wider text-blue-900 bg-blue-50 px-2.5 py-1">
-                      {product.category}
-                    </span>
-                    {product.category === 'Web Development' && (
-                      <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1">
-                        $500 – $5,000 Tier
+          {loadingProducts && products.length === 0 ? (
+            <div className="text-sm text-slate-500 py-8">Loading catalog...</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {filteredDigital.map((product) => (
+                <div
+                  key={product.id}
+                  className="bg-white border border-slate-200 p-7 flex flex-col justify-between hover:border-blue-900 transition-colors"
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-4">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-blue-900 bg-blue-50 px-2.5 py-1">
+                        {product.category}
                       </span>
+                      {product.badge && (
+                        <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1">
+                          {product.badge}
+                        </span>
+                      )}
+                    </div>
+                    <h4 className="text-xl font-normal text-slate-900 mb-3">{product.title}</h4>
+                    <p className="text-sm text-slate-600 font-light leading-relaxed mb-5">
+                      {product.description}
+                    </p>
+
+                    {product.features && product.features.length > 0 && (
+                      <ul className="space-y-2 border-t border-slate-100 pt-4">
+                        {product.features.map((feat, i) => (
+                          <li key={i} className="flex items-start gap-2 text-xs text-slate-600">
+                            <Check className="w-3.5 h-3.5 text-blue-900 shrink-0 mt-0.5" />
+                            <span>{feat}</span>
+                          </li>
+                        ))}
+                      </ul>
                     )}
                   </div>
-                  <h4 className="text-xl font-normal text-slate-900 mb-3">{product.title}</h4>
-                  <p className="text-sm text-slate-600 font-light leading-relaxed">
-                    {product.description}
-                  </p>
-                </div>
 
-                <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between">
-                  <span className="text-2xl font-light text-slate-900">
-                    ${product.price.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => onAddToCart?.(product)}
-                    className="bg-blue-900 hover:bg-blue-800 text-white text-xs font-bold uppercase tracking-widest px-5 py-3 transition-colors cursor-pointer"
-                  >
-                    Add to Cart
-                  </button>
+                  <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between gap-2">
+                    <span className="text-2xl font-light text-slate-900">
+                      ${Number(product.price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => onAddToCart?.(product)}
+                      className="bg-blue-900 hover:bg-blue-800 text-white text-xs font-bold uppercase tracking-widest px-4 py-3 transition-colors cursor-pointer"
+                    >
+                      Add to Cart
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>
