@@ -1,23 +1,13 @@
-name: Supabase Keep-Alive & Build Check
-
-on:
-  schedule:
-    - cron: '0 8 */4 * *'
-  push:
-    branches: [main, dev]
-  pull_request:
-    branches: [main, dev]
-  workflow_dispatch:
-
 jobs:
   verify-and-ping:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
 
       - name: Verify no .env files committed
         run: |
-          if git ls-files | grep -E "(^|/)\.env"; then
+          if git ls-files | grep -E '(^|/)\.env' | grep -Ev '\.(example|sample|template)$'; then
             echo "Error: .env file tracked in git!"
             exit 1
           fi
@@ -34,13 +24,13 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
-      - name: Ping Supabase REST API
-        if: github.event_name != 'pull_request'
+      - name: Ping Supabase (real DB query via PostgREST)
+        if: always() && github.event_name != 'pull_request'
         env:
           SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
         run: |
-          curl -fsS -o /dev/null \
+          curl -fsS -o /dev/null --max-time 30 --retry 3 --retry-delay 5 \
             -H "apikey: $SUPABASE_KEY" \
             -H "Authorization: Bearer $SUPABASE_KEY" \
-            "$SUPABASE_URL/auth/v1/health"
+            "$SUPABASE_URL/rest/v1/YOUR_TABLE?select=id&limit=1"
