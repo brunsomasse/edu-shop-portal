@@ -9,15 +9,23 @@ on:
     branches: [main, dev]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  verify-and-ping:
+  verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
 
       - name: Verify no .env files committed
         run: |
-          if git ls-files | grep -E "(^|/)\.env"; then
+          if git ls-files | grep -E '(^|/)\.env' | grep -Ev '\.(example|sample|template)$'; then
             echo "Error: .env file tracked in git!"
             exit 1
           fi
@@ -34,13 +42,18 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
-      - name: Ping Supabase REST API
-        if: github.event_name != 'pull_request'
+  keep-alive:
+    # Independent of `verify` so an audit/build failure never skips the ping
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ping Supabase (real DB query via PostgREST)
         env:
           SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
         run: |
-          curl -fsS -o /dev/null \
+          curl -fsS -o /dev/null --max-time 30 --retry 3 --retry-delay 5 \
             -H "apikey: $SUPABASE_KEY" \
             -H "Authorization: Bearer $SUPABASE_KEY" \
-            "$SUPABASE_URL/auth/v1/health"
+            "$SUPABASE_URL/rest/v1/YOUR_TABLE?select=id&limit=1"
